@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FamLink - الدردشة العامة</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-image: url('https://i.pinimg.com/originals/04/e4/7e/04e47e2855c78b802b523ff6d1357b25.gif');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+        }
+        #chatContainer {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            justify-content: space-between;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.6); /* خلفية شفافة لتسهيل القراءة */
+        }
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+            background-color: rgba(255, 255, 255, 0.8); /* لون خلفية شفاف */
+            color: black;
+            border-radius: 5px;
+        }
+        #onlineUsers {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 5px;
+        }
+        #inputContainer {
+            display: flex;
+            margin-top: 10px;
+        }
+        #messageInput {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+        }
+        button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="chatContainer">
+        <div id="messages"></div>
+        <div id="onlineUsers">
+            <h3>المتواجدون الآن:</h3>
+            <ul id="usersList"></ul>
+        </div>
+        <div id="inputContainer">
+            <input type="text" id="messageInput" placeholder="اكتب رسالتك هنا...">
+            <button id="sendBtn">إرسال</button>
+        </div>
+    </div>
+
+    <script>
+        const messagesDiv = document.getElementById('messages');
+        const usersList = document.getElementById('usersList');
+        const messageInput = document.getElementById('messageInput');
+        const sendBtn = document.getElementById('sendBtn');
+
+        // اسم المستخدم من التخزين المؤقت
+        const username = sessionStorage.getItem('username');
+        const usercolor = sessionStorage.getItem('usercolor');
+
+        // تحقق إذا لم يكن المستخدم مسجلاً
+        if (!username) {
+            alert('يجب عليك تسجيل الدخول أولاً.');
+            window.location.href = 'index.html';
+        } else {
+            // أضف المستخدم إلى قائمة المتواجدين الآن
+            const userItem = document.createElement('li');
+            userItem.textContent = username;
+            userItem.style.color = usercolor;
+            userItem.setAttribute('id', `user-${username}`);
+            usersList.appendChild(userItem);
+
+            // إزالة المستخدم عند الخروج من الصفحة
+            window.addEventListener('beforeunload', () => {
+                const userElement = document.getElementById(`user-${username}`);
+                if (userElement) userElement.remove();
+            });
+        }
+
+        // إرسال الرسالة
+        sendBtn.addEventListener('click', () => {
+            const message = messageInput.value.trim();
+            if (message !== '') {
+                const messageItem = document.createElement('div');
+                messageItem.style.color = usercolor;
+                messageItem.textContent = `${username}: ${message}`;
+                messagesDiv.appendChild(messageItem);
+                messageInput.value = '';
+                messagesDiv.scrollTop = messagesDiv.scrollHeight;
+            }
+        });
+    </script>
+
+</body></html>
